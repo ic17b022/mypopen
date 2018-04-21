@@ -1,5 +1,5 @@
-#ifndef MYPOPEN_LIBRARY_H
-#define MYPOPEN_LIBRARY_H
+#ifndef MYPOPEN_H
+#define MYPOPEN_H
 
 FILE *mypopen(const char *command, const char *type);
 

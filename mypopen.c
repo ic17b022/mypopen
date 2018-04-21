@@ -1,35 +1,36 @@
 #include <stdio.h>
+#include <unistd.h>
 
 
 FILE *mypopen(const char *command, const char *type)
 {
-    //create pipe
-    //fork process
+    pid_t pid;
+    int mypipe[2];
 
 
-    /* parent process
-     *
-     *
-     *
-     *
-     *
-     *
-     */
+    pipe(mypipe);
 
-    /* child process
-     *
-     * dup2
-     * read or write from/to pipe
-     * wenn w
-     *
-     *
-     *
-     * wenn r
-     * execv/execl zum ausfuehren des kommandos mit sh
-     *
-     *
-     */
+    pid = fork();
 
+    if (pid == (pid_t) 0) {
+            /* child process
+            *
+            * dup2
+            * read or write from/to pipe
+            * wenn w
+            * wenn r
+            * execv/execl zum ausfuehren des kommandos mit sh
+            *
+            *
+            */
+    }
+    else {
+            /* parent process
+            *
+            */
+
+            return fdopen(,type)
+    }
 
 
     return popen(command, type);
