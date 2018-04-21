@@ -13,12 +13,27 @@ FILE *mypopen(const char *command, const char *type)
     pid = fork();
 
     if (pid == (pid_t) 0) {
-            /* child process
+
+        if (strcmp(type, "w")=0) {
+            //wenn write
+            //close read ende
+            //set fd to std.out
+            dup2();
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        } else if (strcmp(type, "r")=0) {
+            //wenn read
+            //close write ende
+            //set fd to stdin
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        } else {
+            //wenn falsch
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        }
+
+        /* child process
             *
             * dup2
             * read or write from/to pipe
-            * wenn w
-            * wenn r
             * execv/execl zum ausfuehren des kommandos mit sh
             *
             *
