@@ -16,14 +16,14 @@ FILE *mypopen(const char *command, const char *type)
 
         if (strcmp(type, "w")=0) {
             //wenn write
-            //close read ende
-            //set fd to std.out
+            //close write end
+            //set fd to std.in
             dup2();
             //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
         } else if (strcmp(type, "r")=0) {
             //wenn read
-            //close write ende
-            //set fd to stdin
+            //close read end
+            //set fd to std.out
             //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
         } else {
             //wenn falsch
@@ -43,6 +43,24 @@ FILE *mypopen(const char *command, const char *type)
             /* parent process
             *
             */
+        if (strcmp(type, "w")=0) {
+            //wenn write
+            //close read end
+            //set fd to std.out
+            dup2();
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        } else if (strcmp(type, "r")=0) {
+            //wenn read
+            //close write end
+            //set fd to std.in
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        } else {
+            //wenn falsch
+            //Im Kindprozeß ist das richtige Ende der Pipe ("r" oder "w") mit stdin bzw. stdout zu assoziieren (dup2(2))
+        }
+
+
+
 
             return fdopen(,type)
     }
