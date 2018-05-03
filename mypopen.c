@@ -11,12 +11,12 @@ static int childID = MYPOPEN_NOCHILD;
 FILE* mypopen(const char* command, const char* type) {
     int mypipe[2];
 
-    if(childID != MYPOPEN_NOCHILD){
+    if (childID != MYPOPEN_NOCHILD) {
         errno = EAGAIN;
         return NULL;
     }
 
-    if (*type != 'w' && *type != 'r') {
+    if (type == NULL || (*type != 'w' && *type != 'r')) {
         errno = EINVAL;
         return NULL;
     }
@@ -63,7 +63,7 @@ FILE* mypopen(const char* command, const char* type) {
 int mypclose(void) {
     int waitReturn = waitpid(childID, NULL, 0);
 
-    if(waitReturn == childID)
+    if (waitReturn == childID)
         childID = MYPOPEN_NOCHILD;
 
     return waitReturn;

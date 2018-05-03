@@ -4,7 +4,6 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/dictionaries
 .idea/**/shelf
@@ -70,7 +69,6 @@ fabric.properties
 *.d
 
 # Object files
-*.o
 *.ko
 *.obj
 *.elf
@@ -86,7 +84,6 @@ fabric.properties
 
 # Libraries
 *.lib
-*.a
 *.la
 *.lo
 
@@ -98,7 +95,6 @@ fabric.properties
 
 # Executables
 *.exe
-*.out
 *.app
 *.i*86
 *.x86_64
@@ -182,12 +178,7 @@ StyleCopReport.xml
 *_i.c
 *_p.c
 *_i.h
-*.ilk
 *.meta
-*.obj
-*.iobj
-*.pch
-*.pdb
 *.ipdb
 *.pgc
 *.pgd
@@ -198,7 +189,6 @@ StyleCopReport.xml
 *.tlh
 *.tmp
 *.tmp_proj
-*.log
 *.vspscc
 *.vssscc
 .builds
@@ -334,7 +324,6 @@ _pkginfo.txt
 # Others
 ClientBin/
 ~$*
-*~
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
