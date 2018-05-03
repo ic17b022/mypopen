@@ -16,7 +16,7 @@ FILE* mypopen(const char* command, const char* type) {
         return NULL;
     }
 
-    if (type == NULL || (*type != 'w' && *type != 'r')) {
+    if (type == NULL || (strcmp(type, "w") != 0 && strcmp(type, "r") != 0)) {
         errno = EINVAL;
         return NULL;
     }
