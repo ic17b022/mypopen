@@ -26,7 +26,10 @@ FILE* mypopen(const char* command, const char* type) {
     childID = fork();
 
     if (childID == -1) {
-        return NULL;    //errno remains set
+        close(mypipe[MYPOPEN_READ]);        //#TODO: error handling?
+        close(mypipe[MYPOPEN_WRITE]);
+        errno = EAGAIN;
+        return NULL;
     } else if (childID == (pid_t) 0) {
         // child process
         if (*type == 'w') {
