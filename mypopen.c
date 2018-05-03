@@ -7,10 +7,9 @@
 #include "mypopen.h"
 
 static int childID = MYPOPEN_NOCHILD;
+static int mypipe[2];
 
 FILE* mypopen(const char* command, const char* type) {
-    int mypipe[2];
-
     if (childID != MYPOPEN_NOCHILD) {
         errno = EAGAIN;
         return NULL;
@@ -61,6 +60,9 @@ FILE* mypopen(const char* command, const char* type) {
 }
 
 int mypclose(void) {
+    //return value and errno intentionally ignored. Either we are in write mode, then this will be fine. Or we are not and the I don't care that closing this failed.
+    close(mypipe[MYPOPEN_WRITE]);
+
     int waitReturn = waitpid(childID, NULL, 0);
 
     if (waitReturn == childID)
