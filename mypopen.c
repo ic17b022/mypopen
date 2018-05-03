@@ -59,8 +59,13 @@ FILE* mypopen(const char* command, const char* type) {
     assert(0);
 }
 
-int mypclose(void) {
-    //return value and errno intentionally ignored. Either we are in write mode, then this will be fine. Or we are not and the I don't care that closing this failed.
+
+//#TODO: ordentlich Fehlerbehandlung. pclose returned -1 on error und setzt errno. Was machen wir denn wenn fflush schief geht? Sofort -1 retournieren? Dann bleibt die pipe offen und der child ist uns auch wurst. Dafür könnte der aufrufer es nochmal probieren.
+// oder machen wir den Rest trotzdem und dann ist die pipe eben zu und was auch immer geflushed hätte werden sollen hat Pech gehabt?
+int mypclose(FILE* stream) {
+    fflush(stream);
+
+    //return value and errno intentionally ignored. Either we are in write mode, then this will be fine. Or we are not and I don't care that closing this failed.
     close(mypipe[MYPOPEN_WRITE]);
 
     int waitReturn = waitpid(childID, NULL, 0);

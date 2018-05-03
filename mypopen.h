@@ -8,8 +8,8 @@
 
 #define MYPOPEN_NOCHILD -2
 
-FILE* mypopen(const char* command, const char* type);
+extern FILE* mypopen(const char* command, const char* type);
 
-int mypclose(void);
+extern int mypclose(FILE* stream);
 
 #endif
