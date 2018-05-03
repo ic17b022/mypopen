@@ -3,8 +3,13 @@
 
 #include <stdio.h>
 
-FILE *mypopen(const char *command, const char *type);
+#define MYPOPEN_READ 0
+#define MYPOPEN_WRITE 1
 
-int mypclose(FILE *stream);
+#define MYPOPEN_NOCHILD -2
+
+FILE* mypopen(const char* command, const char* type);
+
+int mypclose(void);
 
 #endif
