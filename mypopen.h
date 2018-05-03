@@ -6,7 +6,7 @@
 #define MYPOPEN_READ 0
 #define MYPOPEN_WRITE 1
 
-#define MYPOPEN_NOCHILD -2
+#define MYPOPEN_NOCHILD -1
 
 extern FILE* mypopen(const char* command, const char* type);
 
