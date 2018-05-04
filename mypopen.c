@@ -20,6 +20,7 @@
 #include <wait.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "mypopen.h"
 
@@ -61,6 +62,7 @@ static int mypipe[2];
  * \retval  NULL if an error occurs
  */
 FILE* mypopen(const char* command, const char* type) {
+    bool status = true;
     if (childID != MYPOPEN_NOCHILD) {
         errno = EAGAIN;
         return NULL;
@@ -87,13 +89,10 @@ FILE* mypopen(const char* command, const char* type) {
 
             if (mypipe[MYPOPEN_READ] != STDIN_FILENO) {
                 if (dup2(mypipe[MYPOPEN_READ], STDIN_FILENO) == -1)
-                    _Exit(EXIT_FAILURE);                //#TODO: hier wird die pipe nicht geschlossen -> umbauen auf single exit
+                    status = false;
 
                 close(mypipe[MYPOPEN_READ]);
             }
-
-            execl("/bin/sh", "sh", "-c", command, (char*) NULL);
-            _Exit(EXIT_FAILURE);
         } else if (*type == 'r') {
             //wenn read
             //close read end
@@ -101,14 +100,15 @@ FILE* mypopen(const char* command, const char* type) {
             //set fd to std.out
             if (mypipe[MYPOPEN_WRITE] != STDOUT_FILENO) {
                 if (dup2(mypipe[MYPOPEN_WRITE], STDOUT_FILENO) == -1)
-                    _Exit(EXIT_FAILURE);
+                    status = false;
 
                 close(mypipe[MYPOPEN_WRITE]);
             }
-
-            execl("/bin/sh", "sh", "-c", command, (char*) NULL);
-            _Exit(EXIT_FAILURE);
         }
+
+        if (status)
+            execl("/bin/sh", "sh", "-c", command, (char*) NULL);
+        _Exit(EXIT_FAILURE);
     } else {
         // parent process
         if (*type == 'w') {
