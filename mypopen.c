@@ -39,10 +39,13 @@ FILE* mypopen(const char* command, const char* type) {
             //close write end
             close(mypipe[MYPOPEN_WRITE]);
             //set fd to std.in
-            if (dup2(mypipe[MYPOPEN_READ], STDIN_FILENO) == -1)
-                _Exit(EXIT_FAILURE);
+            if (mypipe[MYPOPEN_READ] != STDIN_FILENO) {
+                if (dup2(mypipe[MYPOPEN_READ], STDIN_FILENO) == -1)
+                    _Exit(EXIT_FAILURE);
 
-            close(mypipe[MYPOPEN_READ]);
+                close(mypipe[MYPOPEN_READ]);
+            }
+
             execl("/bin/sh", "sh", "-c", command, (char*) NULL);
             _Exit(EXIT_FAILURE);
         } else if (*type == 'r') {
@@ -50,10 +53,13 @@ FILE* mypopen(const char* command, const char* type) {
             //close read end
             close(mypipe[MYPOPEN_READ]);
             //set fd to std.out
-            if (dup2(mypipe[MYPOPEN_WRITE], STDOUT_FILENO) == -1)
-                _Exit(EXIT_FAILURE);
+            if (mypipe[MYPOPEN_WRITE] != STDOUT_FILENO) {
+                if (dup2(mypipe[MYPOPEN_WRITE], STDOUT_FILENO) == -1)
+                    _Exit(EXIT_FAILURE);
 
-            close(mypipe[MYPOPEN_WRITE]);
+                close(mypipe[MYPOPEN_WRITE]);
+            }
+
             execl("/bin/sh", "sh", "-c", command, (char*) NULL);
             _Exit(EXIT_FAILURE);
         }
