@@ -111,15 +111,12 @@ FILE* mypopen(const char* command, const char* type) {
         if (*type == 'w') {
             close(mypipe[MYPOPEN_READ]);
             if ((fp_stream = fdopen(mypipe[MYPOPEN_WRITE], type)) == NULL) {
-                //error handling if fdopen fails
                 close(mypipe[MYPOPEN_WRITE]);
                 status = false;
             }
-            return fp_stream;
         } else {
             close(mypipe[MYPOPEN_WRITE]);
             if ((fp_stream = fdopen(mypipe[MYPOPEN_READ], type)) == NULL) {
-                //error handling if fdopen fails
                 close(mypipe[MYPOPEN_READ]);
                 status = false;
             }
@@ -127,7 +124,7 @@ FILE* mypopen(const char* command, const char* type) {
         if (status)
             return fp_stream;
         else {
-            //errno is set by fdopen
+            //errno was set by fdopen
             childID = MYPOPEN_NOCHILD;
             return NULL;
         }
@@ -156,8 +153,7 @@ FILE* mypopen(const char* command, const char* type) {
  * \retval  status The exit code of the childprocess
  */
 int mypclose(FILE* stream) {
-
-    int status;
+    int childProcessStatus;
     int waitReturn;
 
     if (childID == MYPOPEN_NOCHILD) {
@@ -170,7 +166,8 @@ int mypclose(FILE* stream) {
         return -1;
     }
 
-    if (fclose(stream) == EOF) {/*errno is set by fclose*/
+    if (fclose(stream) == EOF) {
+        /*errno is set by fclose*/
         fp_stream = NULL;
         childID = MYPOPEN_NOCHILD;
         return -1;
@@ -178,7 +175,7 @@ int mypclose(FILE* stream) {
 
     //handling if waitpid gets interupted (Test 30)	
     do {
-        waitReturn = waitpid(childID, &status, 0);
+        waitReturn = waitpid(childID, &childProcessStatus, 0);
     } while (waitReturn == -1 && errno == EINTR);
 
 
@@ -191,18 +188,21 @@ int mypclose(FILE* stream) {
         return -1;
     }
     //check if child process exited correctly if yes return this exit code
-    if (WIFEXITED(status)) {
+    if (WIFEXITED(childProcessStatus)) {
         childID = MYPOPEN_NOCHILD;
         fp_stream = NULL;
-        return WEXITSTATUS(status);
+        return WEXITSTATUS(childProcessStatus);
+    } else {
+        //if process did not exit correctly return ECHILD
+        childID = MYPOPEN_NOCHILD;
+        fp_stream = NULL;
+        errno = ECHILD;
+
+        return -1;
     }
 
-    //if process did not exit correctly return ECHILD
-    childID = MYPOPEN_NOCHILD;
-    fp_stream = NULL;
-    errno = ECHILD;
-
-    return -1;
+    //if we got here things went very wrong
+    assert(0);
 }
 // =================================================================== eof ==
 
