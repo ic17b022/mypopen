@@ -93,11 +93,8 @@ FILE* mypopen(const char* command, const char* type) {
 
                 close(mypipe[MYPOPEN_READ]);
             }
-        } else if (*type == 'r') {
-            //wenn read
-            //close read end
+        } else {
             close(mypipe[MYPOPEN_READ]);
-            //set fd to std.out
             if (mypipe[MYPOPEN_WRITE] != STDOUT_FILENO) {
                 if (dup2(mypipe[MYPOPEN_WRITE], STDOUT_FILENO) == -1)
                     status = false;
@@ -116,19 +113,23 @@ FILE* mypopen(const char* command, const char* type) {
             if ((fp_stream = fdopen(mypipe[MYPOPEN_WRITE], type)) == NULL) {
                 //error handling if fdopen fails
                 close(mypipe[MYPOPEN_WRITE]);
-                childID = MYPOPEN_NOCHILD;
-                return NULL;
+                status = false;
             }
             return fp_stream;
-        } else if (*type == 'r') {
+        } else {
             close(mypipe[MYPOPEN_WRITE]);
             if ((fp_stream = fdopen(mypipe[MYPOPEN_READ], type)) == NULL) {
                 //error handling if fdopen fails
                 close(mypipe[MYPOPEN_READ]);
-                childID = MYPOPEN_NOCHILD;
-                return NULL;
+                status = false;
             }
+        }
+        if (status)
             return fp_stream;
+        else {
+            //errno is set by fdopen
+            childID = MYPOPEN_NOCHILD;
+            return NULL;
         }
     }
 
