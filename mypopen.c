@@ -173,7 +173,7 @@ int mypclose(FILE* stream) {
         return -1;
     }
 
-    //handling if waitpid gets interupted (Test 30)	
+    //handling if waitpid is interupted (Test 30)
     do {
         waitReturn = waitpid(childID, &childProcessStatus, 0);
     } while (waitReturn == -1 && errno == EINTR);
