@@ -122,7 +122,7 @@ int waitReturn;
     if (waitReturn == childID)
         childID = MYPOPEN_NOCHILD;
     // check if waitpid worked correctly
-    if (waitReturn == -1){
+    if (waitReturn == MYYPOPEN_NOCHILD){
         fp_stream = NULL;
         childID = MYPOPEN_NOCHILD;
         errno = ECHILD;
