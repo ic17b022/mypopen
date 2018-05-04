@@ -37,6 +37,7 @@ LIB_PATH_PIPE=-L./libtest-pipe
 LIB_TEST=-lpopentest
 LIB_PIPE=-ltest-pipe
 
+EXCLUDE_PATTERN=footrulewidth
 ##
 ## ----------------------------------------------------------------- rules --
 ##
@@ -88,3 +89,11 @@ pdf: html
 	$(RM) *.pdf *.html *.tex *.aux *.sty *.log *.eps *.out *.ind *.idx \
 	      *.ilg *.toc *.tps Makefile && \
 	$(MV) refman.save refman.pdf
+
+##
+## ---------------------------------------------------------- dependencies --
+##
+
+##
+## =================================================================== eof ==
+##
