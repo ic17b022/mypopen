@@ -1,3 +1,19 @@
+//*
+// @file mypopen.c
+//
+// Betriebssysteme - Beispiel 2
+// mypopen - a simplified version of popen(3)
+//
+// mypopen recreates most of the functionality of popen(3)
+//
+// @author Manuel Seifner	 <ic17b022@technikum-wien.at>
+// @author Oliver Safar		 <ic17b077@technikum-wien.at>
+// @date 2018/05/4
+//
+// @version 1.0
+//
+//
+// -------------------------------------------------------------- includes --
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -7,10 +23,44 @@
 
 #include "mypopen.h"
 
+// --------------------------------------------------------------- defines --
+
+// -------------------------------------------------------------- typedefs --
+
+// --------------------------------------------------------------- globals --
+
 static FILE* fp_stream = NULL;
 static int childID = MYPOPEN_NOCHILD;
 static int mypipe[2];
 
+// ------------------------------------------------------------- functions --
+
+/**
+ * \brief A simple version of the popen(3) function
+ *
+ * mypopen creates a pipe, forks, and invokes the shell.  Since a pipe is
+ * by definition unidirectional, the type argument may specify only reading or writing, not both; the  result‐
+ * ing stream is correspondingly read-only or write-only.
+ *
+ * The  command  argument is a pointer to a null-terminated string containing a shell command line.  This com‐
+ * mand is passed to /bin/sh using the -c flag; interpretation, if any, is performed by the shell.
+ *
+ * The type argument is a pointer to a null-terminated string which must contain either  the  letter  'r'  for
+ * reading  or the letter 'w' for writing. Otherwise NULL is returned and errno set to EINVAL.
+ *
+ * This popen implementation can only handle one child process at a time. If mypopen is called a second time before
+ * mypclose is called NULL is returned and errno set to EAGAIN.
+ *
+ *
+ * \param   command    the command to be passed to the shell
+ * \param   type       either "w" or "r"
+ *
+ *
+ * \return  FILE*
+ * \retval  FILE* to one end of the pipe
+ * \retval  NULL if an error occurs
+ */
+//#TODO: Error Handling für die ganzen close(). Doxygen nicht vergessen
 FILE* mypopen(const char* command, const char* type) {
     if (childID != MYPOPEN_NOCHILD) {
         errno = EAGAIN;
@@ -28,20 +78,17 @@ FILE* mypopen(const char* command, const char* type) {
     childID = fork();
 
     if (childID == MYPOPEN_NOCHILD) {
-        close(mypipe[MYPOPEN_READ]);        //#TODO: error handling?
+        close(mypipe[MYPOPEN_READ]);        //no error handling here. We are already in error state and returning NULL.
         close(mypipe[MYPOPEN_WRITE]);
-
         return NULL;
     } else if (childID == 0) {
         // child process
         if (*type == 'w') {
-            //wenn write
-            //close write end
             close(mypipe[MYPOPEN_WRITE]);
-            //set fd to std.in
+
             if (mypipe[MYPOPEN_READ] != STDIN_FILENO) {
                 if (dup2(mypipe[MYPOPEN_READ], STDIN_FILENO) == -1)
-                    _Exit(EXIT_FAILURE);
+                    _Exit(EXIT_FAILURE);                //#TODO: hier wird die pipe nicht geschlossen -> umbauen auf single exit
 
                 close(mypipe[MYPOPEN_READ]);
             }
@@ -90,7 +137,19 @@ FILE* mypopen(const char* command, const char* type) {
     assert(0);
 }
 
-
+/**
+ * \brief A simple version of the pclose(3) function
+ *
+ *  The pclose() function waits for the associated process to terminate and returns the exit status of the command as
+ *  returned by waitpid(2).
+ *
+ *
+ * \param   stream    the filestream to be closed
+ *
+ *
+ * \return  int
+ * \retval  status The exit code of the childprocess
+ */
 //#TODO: ordentlich Fehlerbehandlung. pclose returned -1 on error und setzt errno. Was machen wir denn wenn fflush schief geht? Sofort -1 retournieren? Dann bleibt die pipe offen und der child ist uns auch wurst. Dafür könnte der aufrufer es nochmal probieren.
 // oder machen wir den Rest trotzdem und dann ist die pipe eben zu und was auch immer geflushed hätte werden sollen hat Pech gehabt?
 int mypclose(FILE* stream) {
@@ -146,3 +205,11 @@ int mypclose(FILE* stream) {
 
     return -1;
 }
+// =================================================================== eof ==
+
+// Local Variables:
+// mode: c
+// c-mode: k&r
+// c-basic-offset: 8
+// indent-tabs-mode: t
+// End:
