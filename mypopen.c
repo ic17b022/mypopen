@@ -143,6 +143,11 @@ FILE* mypopen(const char* command, const char* type) {
  *  The pclose() function waits for the associated process to terminate and returns the exit status of the command as
  *  returned by waitpid(2).
  *
+ *  returns -1 on error.
+ *  if there is no childprocess to wait on or it returned an error errno is set to ECHILD
+ *  if the wrong filestream is passed errno is set to EINVAL
+ *
+ *
  *
  * \param   stream    the filestream to be closed
  *
@@ -188,7 +193,6 @@ int mypclose(FILE* stream) {
     if (waitReturn == -1) {
         fp_stream = NULL;
         childID = MYPOPEN_NOCHILD;
-        errno = ECHILD;
         return -1;
     }
     //check if child process exited correctly if yes return this exit code
